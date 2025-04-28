@@ -1,0 +1,69 @@
+# 🛠️ Importar bibliotecas
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 📥 Lista de links dos empréstimos (pode adicionar quantos quiser)
+links_emprestimos = [
+    'https://raw.githubusercontent.com/FranciscoFoz/7_Days_of_Code_Alura-Python-Pandas/refs/heads/main/Dia_1-Importando_dados/Datasets/dados_emprestimos/emprestimos-20101.csv',
+    'https://raw.githubusercontent.com/FranciscoFoz/7_Days_of_Code_Alura-Python-Pandas/refs/heads/main/Dia_1-Importando_dados/Datasets/dados_emprestimos/emprestimos-20102.csv',
+    'https://raw.githubusercontent.com/FranciscoFoz/7_Days_of_Code_Alura-Python-Pandas/refs/heads/main/Dia_1-Importando_dados/Datasets/dados_emprestimos/emprestimos-20111.csv',
+    'https://raw.githubusercontent.com/FranciscoFoz/7_Days_of_Code_Alura-Python-Pandas/refs/heads/main/Dia_1-Importando_dados/Datasets/dados_emprestimos/emprestimos-20112.csv',
+    'https://raw.githubusercontent.com/FranciscoFoz/7_Days_of_Code_Alura-Python-Pandas/refs/heads/main/Dia_1-Importando_dados/Datasets/dados_emprestimos/emprestimos-20122.csv',
+    'https://raw.githubusercontent.com/FranciscoFoz/7_Days_of_Code_Alura-Python-Pandas/refs/heads/main/Dia_1-Importando_dados/Datasets/dados_emprestimos/emprestimos-20131.csv',
+    'https://raw.githubusercontent.com/FranciscoFoz/7_Days_of_Code_Alura-Python-Pandas/refs/heads/main/Dia_1-Importando_dados/Datasets/dados_emprestimos/emprestimos-20132.csv',
+    'https://raw.githubusercontent.com/FranciscoFoz/7_Days_of_Code_Alura-Python-Pandas/refs/heads/main/Dia_1-Importando_dados/Datasets/dados_emprestimos/emprestimos-20141.csv',
+    'https://raw.githubusercontent.com/FranciscoFoz/7_Days_of_Code_Alura-Python-Pandas/refs/heads/main/Dia_1-Importando_dados/Datasets/dados_emprestimos/emprestimos-20142.csv',
+    'https://raw.githubusercontent.com/FranciscoFoz/7_Days_of_Code_Alura-Python-Pandas/refs/heads/main/Dia_1-Importando_dados/Datasets/dados_emprestimos/emprestimos-20151.csv',
+    'https://raw.githubusercontent.com/FranciscoFoz/7_Days_of_Code_Alura-Python-Pandas/refs/heads/main/Dia_1-Importando_dados/Datasets/dados_emprestimos/emprestimos-20152.csv',
+    'https://raw.githubusercontent.com/FranciscoFoz/7_Days_of_Code_Alura-Python-Pandas/refs/heads/main/Dia_1-Importando_dados/Datasets/dados_emprestimos/emprestimos-20161.csv',
+  
+    # Adicione mais links aqui, separados por vírgula
+]
+
+# 📥 Link dos exemplares
+link_exemplares = 'https://raw.githubusercontent.com/FranciscoFoz/7_Days_of_Code_Alura-Python-Pandas/main/Dia_1-Importando_dados/Datasets/dados_exemplares.parquet'
+
+# 📚 Carregar todos os arquivos de empréstimos e concatenar
+df_emprestimos_list = []
+
+for link in links_emprestimos:
+    df_temp = pd.read_csv(link)
+    df_emprestimos_list.append(df_temp)
+
+# Junta todos os DataFrames em um só
+df_emprestimos = pd.concat(df_emprestimos_list, ignore_index=True)
+
+# Carregar os dados dos exemplares
+df_exemplares = pd.read_parquet(link_exemplares)
+
+# 👀 Verificando rapidamente os dados
+print("Primeiras linhas dos empréstimos unificados:")
+display(df_emprestimos.head())
+
+print("\nPrimeiras linhas dos exemplares:")
+display(df_exemplares.head())
+
+# 📌 Conferir nomes de colunas
+print("\nColunas de empréstimos:")
+print(df_emprestimos.columns)
+
+print("\nColunas de exemplares:")
+print(df_exemplares.columns)
+
+# 🧩 Mesclar empréstimos e exemplares
+# ⚡ Atenção: ajuste o 'on' se a coluna de ligação tiver outro nome
+df_unificado = pd.merge(df_emprestimos, df_exemplares, on='codigo_barras', how='inner')
+
+# 📋 Tamanho do DataFrame antes da limpeza
+print(f"\nQuantidade de linhas antes da limpeza: {df_unificado.shape[0]}")
+
+# 🧹 Limpar dados
+df_unificado.dropna(inplace=True)
+df_unificado.drop_duplicates(inplace=True)
+
+# 📋 Tamanho do DataFrame depois da limpeza
+print(f"\nQuantidade de linhas depois da limpeza: {df_unificado.shape[0]}")
+
+# 💾 Salvar o resultado
+df_unificado.to_csv(r'C:/Users/vanjo/Downloads/Projetos/meu_arquivo.csv', index=False)
