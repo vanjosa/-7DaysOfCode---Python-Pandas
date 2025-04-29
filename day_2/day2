@@ -1,0 +1,57 @@
+# 🔥 1. Importando Bibliotecas
+import pandas as pd
+
+# 🔥 2. Carregando os Dados
+# (Aqui você importa do seu link Raw ou do arquivo local)
+df = pd.read_csv("/content/dados_unificados.csv")
+
+# 🔥 3. Excluindo a coluna 'registro_sistema'
+if 'registro_sistema' in df.columns:
+    df = df.drop(columns=['registro_sistema'])
+else:
+    print("Coluna 'registro_sistema' não encontrada para exclusão.")
+
+# 🔥 4. Convertendo a coluna 'matricula_ou_siape' para String
+if 'matricula_ou_siape' in df.columns:
+    df['matricula_ou_siape'] = df['matricula_ou_siape'].astype(str)
+else:
+    print("Coluna 'matricula_ou_siape' não encontrada para conversão.")
+
+# 🔥 5. Criando nova coluna 'classe_cdu' baseada na coluna 'localizacao'
+
+def mapear_classe_cdu(localizacao):
+    try:
+        localizacao = int(str(localizacao)[:3])  # Garante pegar os 3 primeiros dígitos
+    except:
+        return 'Desconhecido'
+    
+    if 0 <= localizacao <= 99:
+        return 'Generalidades. Ciência e conhecimento'
+    elif 100 <= localizacao <= 199:
+        return 'Filosofia e psicologia'
+    elif 200 <= localizacao <= 299:
+        return 'Religião'
+    elif 300 <= localizacao <= 399:
+        return 'Ciências sociais'
+    elif 400 <= localizacao <= 499:
+        return 'Classe vaga'
+    elif 500 <= localizacao <= 599:
+        return 'Matemática e ciências naturais'
+    elif 600 <= localizacao <= 699:
+        return 'Ciências aplicadas'
+    elif 700 <= localizacao <= 799:
+        return 'Belas artes'
+    elif 800 <= localizacao <= 899:
+        return 'Linguagem. Língua. Linguística'
+    elif 900 <= localizacao <= 999:
+        return 'Geografia. Biografia. História'
+    else:
+        return 'Fora da Classificação'
+
+if 'localizacao' in df.columns:
+    df['classe_cdu'] = df['localizacao'].apply(mapear_classe_cdu)
+else:
+    print("Coluna 'localizacao' não encontrada para criação da classe CDU.")
+
+# 🔥 6. Visualizando as alterações
+print(df.head())
